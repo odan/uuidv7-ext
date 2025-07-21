@@ -45,6 +45,6 @@ echo uuidv7();
 * ramsey/uuid: todo
 * uuidv7_xhit: todo
 * uuidv7_antonz: todo
-* uuidv7_gtp_o3: todo
+* uuidv7_gpt_o3: todo
 * uuidv7_gpt_4o: todo
 
