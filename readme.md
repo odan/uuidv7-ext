@@ -14,13 +14,13 @@ phpize
 make
 ```
 
-Optional: Installation to PHP extensions directory
+## Installation to PHP extensions directory
 
 ```
 sudo make install
 ```
 
-Activate extension in php.ini
+## Activate extension in php.ini
 
 ```ini
 extension=uuidv7.so
@@ -37,4 +37,14 @@ php -dextension=modules/uuidv7.so -r "echo uuidv7(), PHP_EOL;"
 ```php
 echo uuidv7();
 ```
+
+## Performance Comparison
+
+* uuidv7-ext: ~4.000.000 UUIDs / second = 100%
+* symfony/uid: todo
+* ramsey/uuid: todo
+* uuidv7_xhit: todo
+* uuidv7_antonz: todo
+* uuidv7_gtp_o3: todo
+* uuidv7_gpt_4o: todo
 
