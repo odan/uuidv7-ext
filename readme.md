@@ -48,3 +48,6 @@ echo uuidv7();
 * uuidv7_gpt_o3: todo
 * uuidv7_gpt_4o: todo
 
+## Licence
+
+MIT
