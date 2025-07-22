@@ -13,28 +13,34 @@ PHP_FUNCTION(uuidv7)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    uint64_t timestamp_ms = (uint64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    uint64_t ts = (uint64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
 
-    int rand_a = php_mt_rand() & 0x0FFF;
-    int rand_b = php_mt_rand() & 0x3FFF;
-    uint64_t rand_c = ((uint64_t)php_mt_rand() << 32) | php_mt_rand();
+    unsigned char r[8];
+    if (php_random_bytes(r, sizeof(r), 0) != SUCCESS) {
+        RETURN_FALSE;
+    }
 
-    rand_a |= 0x7000; // set version to 7
-    rand_b |= 0x8000; // set variant to 10xx
+    unsigned char extra[2];
+    if (php_random_bytes(extra, sizeof(extra), 0) != SUCCESS) {
+        RETURN_FALSE;
+    }
 
-    char uuid[37]; // UUID string length + null terminator
-
+    char uuid[37];
     snprintf(uuid, sizeof(uuid),
-        "%02x%02x%02x%02x-%02x%02x-%04x-%04x-%012" PRIx64,
-        (unsigned int)((timestamp_ms >> 40) & 0xFF),
-        (unsigned int)((timestamp_ms >> 32) & 0xFF),
-        (unsigned int)((timestamp_ms >> 24) & 0xFF),
-        (unsigned int)((timestamp_ms >> 16) & 0xFF),
-        (unsigned int)((timestamp_ms >> 8) & 0xFF),
-        (unsigned int)(timestamp_ms & 0xFF),
-        rand_a,
-        rand_b,
-        rand_c & 0xFFFFFFFFFFFF
+        "%02x%02x%02x%02x-%02x%02x-%04x-%04x-%04x%04x%04x",
+        (int)((ts >> 40) & 0xFF),
+        (int)((ts >> 32) & 0xFF),
+        (int)((ts >> 24) & 0xFF),
+        (int)((ts >> 16) & 0xFF),
+        (int)((ts >> 8) & 0xFF),
+        (int)(ts & 0xFF),
+
+        ((r[0] << 8) | r[1]) & 0x0FFF | 0x7000,
+        ((r[2] << 8) | r[3]) & 0x3FFF | 0x8000,
+
+        (r[4] << 8) | r[5],
+        (r[6] << 8) | r[7],
+        (extra[0] << 8) | extra[1]
     );
 
     RETURN_STRING(uuid);
